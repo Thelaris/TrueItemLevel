@@ -1,8 +1,7 @@
-## Interface: 60000
+## Interface: 70200
 ## Title: True Item Level |cff00ccff(TiL)|r
-## Author: Dreamstate83 (aka Frosty)
-## Notes: Shows the spec and TRUE (non-blizzard) equipped average item level of players within inspect range through the tooltip. This also adds your equipped item level in your character stats frame.
-## SavedVariables: tilConfig, cache
+## Author: Thelaris
+## Notes: A World of Warcraft UI addon to show the specialty and item level/iLVL of a player within inspect range, originally created by Dreamstate83 (aka Frosty). This is a re-release using Dreamstate83's code.
 
 embeds.xml
 trueitemlevel.xml
