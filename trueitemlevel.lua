@@ -34,6 +34,9 @@
 		local pvp_c =		"a335ee";
 		local miss_c =		"ff0000";
 		local disabled_c =	"333333";
+		
+	--previous item reference (7.X Artifact iLVL Fix)
+		local previousLink;
 
 --set protected variables---------------------------------
 ----------------------------------------------------------
@@ -1091,7 +1094,7 @@
 		data.mia = 0;
 
 		local link;
-		local iLVL, count = 0,0;
+		local iLVL, count, mainHandILvl, offHandILvl = 0,0,0,0; -- added mainHandILvl and offHandILvl for Artifact OH weapon ilvl correction
 		local twoHander, missingmain, missingoff, titansgrip = false, false, false, false;
 		local lClass, eClass = UnitClass(unit);
 
@@ -1114,14 +1117,24 @@
 
 					--do two-handed check
 					if (i == 16) then	--mainhand
+						mainHandILvl = level;
 						--is the item a two-hander?
 						if (equiptype == "INVTYPE_2HWEAPON" or equiptype == "INVTYPE_RANGED" or equiptype == "INVTYPE_RANGEDRIGHT") then
 							twoHander = true;
 						else
 							twoHander = false;
+							previousLink = link;
 						end
 			
  					end
+					
+					--7.X Artifact Off-Hand iLVL Fix
+					if (i == 17 and rarity == 6 and mainHandILvl > level) then 
+						level = mainHandILvl;
+					elseif (i == 17 and rarity == 6 and mainHandILvl < level) then
+						iLVL = iLVL - 750 + level;
+						
+					end
 
 
 					--check other stats
@@ -1198,7 +1211,8 @@
 
 		--set the item level average (TiL)
 		if (count > 0) then
-			data.til = floor((iLVL / count)*1)/1;
+			--data.til = floor((iLVL / count)*1)/1;
+			data.til = ceil((iLVL / count)*1)/1; --Blizzard round the ilvl value, not floor
 		else
 			data.til = 0;
 		end
@@ -2022,7 +2036,8 @@
 
 		--set the item level average (TiL)
 		if (count > 0) then
-			data.til = floor((iLVL / count)*1)/1;
+			--data.til = floor((iLVL / count)*1)/1;
+			data.til = ceil((iLVL / count)*1)/1; --Blizzard round the ilvl value, not floor
 		else
 			data.til = 0;
 		end
