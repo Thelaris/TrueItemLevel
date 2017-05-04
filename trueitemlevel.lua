@@ -35,9 +35,6 @@
 		local miss_c =		"ff0000";
 		local disabled_c =	"333333";
 		
-	--previous item reference (7.X Artifact iLVL Fix)
-		local previousLink;
-
 --set protected variables---------------------------------
 ----------------------------------------------------------
 
@@ -84,6 +81,8 @@
 		end
 
 		local current = {};
+		
+		local artifactScanCount = 0;
 
 		local addoncontrol = -1;
 		local last_misscount = -1;
@@ -379,7 +378,7 @@
 				tilpub:gatherstats("player",tag_statpage,"statspage_scanupdate");
 			end
 		}
-		tinsert(PAPERDOLL_STATCATEGORIES["GENERAL"].stats, "TRUEITEMLEVEL");
+		--tinsert(PAPERDOLL_STATCATEGORIES["GENERAL"].stats, "TRUEITEMLEVEL"); --General Stats character window frame was removed in 7.0
 
 		tilpub:gatherstats("player",tag_statpage,"statspage_scanupdate");
 
@@ -741,7 +740,7 @@
 				end
 
 				--get the values of gathertil to figure out if we need to rescan or not
-				local data = gathertil(unit,addonTag,callbackFunc);
+					local data = gathertil(unit,addonTag,callbackFunc);
 
 				if (not data) then
 					--nothing was returned?
@@ -961,7 +960,6 @@
 
 
 	function tilpub:gatherstats(unit,addonTag,callbackFunc)
-
 		if (unit == "mouseover") then
 			--if the unit requested is for the mouseover, then we need to make sure that the mouseover unit is set
 			name, unit = GameTooltip:GetUnit();
@@ -999,10 +997,12 @@
 				if (UnitIsUnit(unit,"player")) then
 					--we don't have to set up inspection queue, because player data is always available
 					local specData, tilData;
-
+					
 					specData = gatherspec(unit,addonTag,callbackFunc);
+					
 					tilData = gathertil(unit,addonTag,callbackFunc);
-
+					
+					
 					local lClass, eClass = UnitClass("player");
 
 					local data = {
@@ -1123,19 +1123,35 @@
 							twoHander = true;
 						else
 							twoHander = false;
-							previousLink = link;
 						end
 			
  					end
 					
-					--7.X Artifact Off-Hand iLVL Fix
-					if (i == 17 and rarity == 6 and mainHandILvl > level) then 
-						level = mainHandILvl;
-					elseif (i == 17 and rarity == 6 and mainHandILvl < level) then
-						iLVL = iLVL - 750 + level;
-						
+					--7.X Artifact iLVL Fix
+					--check main hand artifact ilvl, restart if 750
+					if (i == 16 and rarity == 6 and level == 750 and artifactScanCount < 3 and specName ~= 'Protection') then
+						artifactScanCount = artifactScanCount + 1;
+						tilpub:tildbg(tag_mouse..": [|cff00ccffArtifact 750 rescanning|r] |cffffcc00fired|r")
+						doCallback(addonTag,"gathertil",'rescanning',data);
 					end
-
+					
+					--check off hand artifact ilvl, restart if 750 - Protection specs only
+					if (i == 17 and rarity == 6 and level == 750 and artifactScanCount < 3 and specName == 'Protection') then
+						artifactScanCount = artifactScanCount + 1;
+						tilpub:tildbg(tag_mouse..": [|cff00ccffProt Artifact 750 rescanning|r] |cffffcc00fired|r")
+						doCallback(addonTag,"gathertil",'rescanning',data);
+					end
+					
+					--set MH to OH ilvl or vice versa
+					if (mainHandILvl)then
+						if (i == 17 and rarity == 6 and mainHandILvl > level) then 
+							level = mainHandILvl; --OH equals MH ilvl
+						elseif (i == 17 and rarity == 6 and mainHandILvl < level) then
+							iLVL = iLVL - 750 + level; --takeaway one 750 weapon and add OH ilvl
+						end
+						artifactScanCount = 0;
+					end
+					--END 7.X Artifact iLVL Fix
 
 					--check other stats
 					if (level) then
@@ -1212,7 +1228,7 @@
 		--set the item level average (TiL)
 		if (count > 0) then
 			--data.til = floor((iLVL / count)*1)/1;
-			data.til = ceil((iLVL / count)*1)/1; --Blizzard round the ilvl value, not floor
+			data.til = floor((iLVL / count)*1)/1;
 		else
 			data.til = 0;
 		end
@@ -2037,7 +2053,7 @@
 		--set the item level average (TiL)
 		if (count > 0) then
 			--data.til = floor((iLVL / count)*1)/1;
-			data.til = ceil((iLVL / count)*1)/1; --Blizzard round the ilvl value, not floor
+			data.til = floor((iLVL / count)*1)/1;
 		else
 			data.til = 0;
 		end
