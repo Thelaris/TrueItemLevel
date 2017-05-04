@@ -1,0 +1,482 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<!-- CREATE TEMPLATES -->
+	<!-- PUBLISH DROPDOWN TEMPLATE -->
+	<Frame name="tilpublishDropdown" inherits="UIDropDownMenuTemplate" id="1" virtual="true">
+
+	</Frame>
+	
+	<!-- PUBLISH BUTTON TEMPLATE -->	
+	<Button name="tilPublishButton" virtual="true">
+		<Size>
+			<AbsDimension x="30" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="LEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnClick>
+				
+				--[[
+				local activeEditBox =  ChatEdit_GetActiveWindow();
+				if MacroFrameText and MacroFrameText:IsShown() and MacroFrameText:HasFocus() then
+				local link = GetTradeSkillListLink();
+				local text = MacroFrameText:GetText()..link;
+				if 255 >= strlenutf8(text) then
+				MacroFrameText:Insert(link);
+				end
+				elseif activeEditBox then
+				local link=GetTradeSkillListLink();
+				if (not ChatEdit_InsertLink(link) ) then
+				assert(activeEditBox:GetName(), "Failed to add tradeskill link")
+				end
+				else
+				ToggleDropDownMenu(1, nil, TradeSkillLinkDropDown, "TradeSkillLinkFrame", 25, 25);
+				end
+			--]]
+				PlaySound("igMainMenuOptionCheckBoxOn");
+			</OnClick>
+			<OnEnter>
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide"/>
+		</Scripts>
+		<NormalTexture file="Interface\Buttons\UI-LinkProfession-Up"/>
+		<PushedTexture file="Interface\Buttons\UI-LinkProfession-Down"/>
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+	</Button>
+	
+	<!-- PROGRESS BAR TEMPLATE -->
+	<Frame name="tilProgressBarTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="264" y="20"/>
+    </Size>
+    <Layers>
+      <Layer level="BORDER">
+        <Texture name="$parentLeft" file="Interface\GuildFrame\GuildFrame">
+          <Size x="18" y="18"/>
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+          </Anchors>
+          <TexCoords left="0.60742188" right="0.62500000" top="0.78710938" bottom="0.82226563"/>
+        </Texture>
+        <Texture name="$parentRight" file="Interface\GuildFrame\GuildFrame">
+          <Size x="18" y="18"/>
+          <Anchors>
+            <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+          </Anchors>
+          <TexCoords left="0.60742188" right="0.62500000" top="0.82617188" bottom="0.86132813"/>
+        </Texture>
+        <Texture name="$parentMiddle" file="Interface\GuildFrame\GuildFrame">
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parentLeft" relativePoint="TOPRIGHT" x="0" y="0"/>
+            <Anchor point="BOTTOMRIGHT" relativeTo="$parentRight" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+          </Anchors>
+          <TexCoords left="0.60742188" right="0.62500000" top="0.74804688" bottom="0.78320313"/>
+        </Texture>
+      </Layer>
+      <Layer level="BACKGROUND">
+        <Texture name="$parentBG" file="Interface\GuildFrame\GuildFrame">
+          <Size x="0" y="14"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="LEFT" x="0" y="0"/>
+            <Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="RIGHT" x="0" y="0"/>
+          </Anchors>
+          <TexCoords left="0.39843750" right="0.41210938" top="0.96875000" bottom="0.99609375"/>
+        </Texture>
+      </Layer>
+      <Layer level="BACKGROUND" textureSubLevel="1">
+        <Texture name="$parentProgress" file="Interface\TargetingFrame\UI-StatusBar" parentKey="progress">
+          <Size x="1" y="14"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="LEFT" x="1" y="0"/>
+          </Anchors>
+          <Color r="0.224" g="0.396" b="0.839"/>
+        </Texture>
+        <Texture name="$parentCap" file="Interface\TargetingFrame\UI-StatusBar" hidden="true" parentKey="cap">
+          <Size x="20" y="14"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentProgress" relativePoint="RIGHT" x="0" y="0"/>
+          </Anchors>
+          <Color r="0" g="0.245" b="0.094" a="0.5"/>
+        </Texture>
+      </Layer>
+      <Layer level="ARTWORK">
+        <Texture name="$parentCapMarker" file="Interface\GuildFrame\GuildFrame" hidden="true" parentKey="capMarker">
+          <Size x="9" y="20"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentCap" relativePoint="RIGHT" x="-4" y="0"/>
+          </Anchors>
+          <TexCoords left="0.38378906" right="0.39257813" top="0.95898438" bottom="0.99804688"/>
+        </Texture>
+      </Layer>
+      <Layer level="ARTWORK" textureSubLevel="1">
+        <FontString name="$parentText" inherits="GameFontHighlightSmall">
+          <Anchors>
+            <Anchor point="BOTTOM" x="0" y="4"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+  </Frame>
+  
+	<!-- SEARCH BOX TEMPLATE -->
+	<EditBox name="iconicSearchBoxTemplate" autoFocus="false" virtual="true">
+	<Size>
+		<AbsDimension x="180" y="20"/>
+	</Size>
+	<Anchors>
+		<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+			<Offset x="8" y="-9"/>
+		</Anchor>
+	</Anchors>
+	<Layers>
+		<Layer level="BACKGROUND">
+			<Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+				<Size>
+					<AbsDimension x="8" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="-5" y="0"/>
+					</Anchor>
+				</Anchors>
+				<TexCoords left="0" right="0.0625" top="0" bottom="0.625"/>
+			</Texture>
+			<Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+				<Size>
+					<AbsDimension x="8" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625"/>
+			</Texture>
+			<Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+				<Size>
+					<AbsDimension x="0" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+					<Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT"/>
+				</Anchors>
+				<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625"/>
+			</Texture>
+		</Layer>
+		<Layer level="OVERLAY">
+			<Texture name="$parentSearchIcon" file="Interface\Common\UI-Searchbox-Icon">
+				<Size>
+					<AbsDimension x="14" y="14"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" y="-2"/>
+				</Anchors>
+				<Color r="0.7" g="0.7" b="0.7" />
+			</Texture>
+		</Layer>
+	</Layers>
+        <Scripts>
+        </Scripts>
+		<FontString inherits="ChatFontSmall"/>
+	</EditBox>
+	  
+	<!-- HEADER BUTTON TEMPLATE -->
+	 <Button name="ColumnButtonTemplate" inherits="GuildRosterColumnButtonTemplate" virtual="true">
+		<Size>
+		  <AbsDimension x="10" y="24"/>
+		</Size>
+		<Layers>
+		  <Layer level="BACKGROUND">
+			<Texture name="$parentLeft" urgency="5">
+			  <Size>
+				<AbsDimension x="5" y="24"/>
+			  </Size>
+			  <Anchors>
+				<Anchor point="TOPLEFT"/>
+			  </Anchors>
+			  <TexCoords left="0" right="0.078125" top="0" bottom="0.75"/>
+			</Texture>
+			<Texture name="$parentMiddle" urgency="5">
+			  <Size>
+				<AbsDimension x="10" y="24"/>
+			  </Size>
+			  <Anchors>
+				<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+			  </Anchors>
+			  <TexCoords left="0.078125" right="0.90625" top="0" bottom="0.75"/>
+			</Texture>
+			<Texture name="$parentRight" urgency="5">
+			  <Size>
+				<AbsDimension x="5" y="24"/>
+			  </Size>
+			  <Anchors>
+				<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
+			  </Anchors>
+			  <TexCoords left="0.90625" right="0.96875" top="0" bottom="0.75"/>
+			</Texture>
+		  </Layer>
+		</Layers>
+		<Scripts>
+		</Scripts>
+		<ButtonText name="$parenttext">
+		  <Anchors>
+			<Anchor point="LEFT">
+			  <Offset>
+				<AbsDimension x="8" y="0"/>
+			  </Offset>
+			</Anchor>
+		  </Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontHighlightSmall"/>
+		<HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
+		  <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parentLeft">
+			  <Offset>
+				<AbsDimension x="-2" y="5"/>
+			  </Offset>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT" relativeTo="$parentRight">
+			  <Offset>
+				<AbsDimension x="2" y="-7"/>
+			  </Offset>
+			</Anchor>
+		  </Anchors>
+		</HighlightTexture>
+	  </Button>
+	  
+	<!-- LIST ENTRY BUTTON TEMPLATE -->
+	 <Button name="tilListEntryButtonTemplate" inherits="GuildRosterButtonTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="299" y="20"/>
+    </Size>
+    <Layers>
+      <Layer level="BACKGROUND">
+      </Layer>
+      <Layer level="BORDER">
+      </Layer>
+      <Layer level="ARTWORK">
+        <Texture name="$parentIcon" parentKey="icon" hidden="true">
+          <Anchors>
+            <Anchor point="LEFT" x="36" y="0"/>
+          </Anchors>
+          <Size>
+            <AbsDimension x="16" y="16"/>
+          </Size>
+        </Texture>
+      </Layer>
+    </Layers>
+    <Frames>
+    </Frames>
+    <Scripts>
+		<OnShow>
+			self:SetHighlightTexture("Interface\\FriendsFrame\\UI-FriendsFrame-HighlightBar");
+		</OnShow>
+		<OnLoad>
+			self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+		</OnLoad>
+		<OnClick>
+			--self:Hide();
+			--print(self:GetName().." clicked");
+			--self:LockHighlight();
+		</OnClick>
+		<OnEnter>
+		</OnEnter>
+		<OnLeave>
+		</OnLeave>
+	</Scripts>
+  </Button>
+
+	<!-- LIST ENTRY STRING TEMPLATE -->
+	<FontString name="ListEntryStringTemplate" inherits="GameFontHighlightSmall" wordwrap="false" hidden="false" virtual="true">
+	<Anchors>
+	<Anchor point="LEFT" x="0" y="0"/>
+	</Anchors>
+	</FontString>
+
+	<!-- LIST FRAME PER TAB TEMPLATES -->
+	<Button name="tilFrameTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
+		<Scripts>
+			<OnClick>
+				PlaySound("igCharacterInfoTab");
+				tilui:tilFrameTabButtonHandler(self:GetName());
+			</OnClick>
+		</Scripts>
+	</Button>
+	
+	<Frame name="tilFrameContentTemplate" virtual="true">
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset><AbsDimension x="0" y="0"/></Offset>
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface/Tooltips/UI-Tooltip-Background">
+		
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+               <FontString name="$parentHeader" inherits="GameFontNormal">
+                   <Anchors>
+                       <Anchor point="TOP" relativeTo="$parent">
+                           <Offset>
+                               <AbsDimension x="40" y="-11"/>
+                           </Offset>
+                       </Anchor>
+                   </Anchors>
+				   <Scripts>
+				   </Scripts>
+               </FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropColor(0,1,0,0);
+				self:SetAllPoints("tilFrame");
+			</OnLoad>
+		</Scripts>
+
+		<Frames>
+			<Frame name="$parentListRegion" hidden="false">
+				<Size>
+					<AbsDimension x="442" y="304" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset><AbsDimension x="16" y="-92"/></Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface/Tooltips/UI-Tooltip-Background">
+				
+				</Backdrop>
+				<Layers>
+				
+				</Layers>
+				<Frames>
+					<ScrollFrame name="$parentScroll" inherits="FauxScrollFrameTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT"/>
+							<Anchor point="BOTTOMRIGHT"/>
+						</Anchors>
+						<Scripts>
+						</Scripts>
+					</ScrollFrame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetBackdropColor(1,0,0,0);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+	
+	<!-- CREATE FRAMES -->
+	<Frame name="tilFrame" toplevel="true" frameStrata="MEDIUM" moveable="true" enableMouse="true" hidden="false" parent="UIParent">
+		<Size>
+			<AbsDimension x="488" y="425" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset><AbsDimension x="0" y="0"/></Offset>
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface/Tooltips/UI-Tooltip-Background">
+		
+		</Backdrop>
+		<Layers>
+		
+		</Layers>
+		<Frames>
+			<!-- create close button -->
+			<Button name="$parentCloseButton" inherits="UIPanelCloseButton" hidden="false">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+						<Offset>							
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			
+			<!-- set up tabbed pages -->
+			
+			<!--set up frame graphic-->
+			<Frame name="$parentBG" hidden="false">
+				<Size>
+					<AbsDimension x="1024" y="512" />
+				</Size>
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset><AbsDimension x="-20" y="-2" /></Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+				
+				</Layers>
+				<Frames>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetBackdrop({
+							bgFile = ("Interface\\AddOns\\TrueItemLevel\\gfx\\tilframe.tga");
+						});
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropColor(0,0,0,0);
+				self:SetMovable(true);
+				self:EnableMouse(true);
+				self:RegisterForDrag("LeftButton");
+				self:SetClampedToScreen(true);
+				tinsert(UISpecialFrames,self:GetName());
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing();
+			</OnDragStop>
+			<OnShow>
+				PlaySound("igCharacterInfoOpen");
+			</OnShow>
+			<OnHide>
+				PlaySound("igCharacterInfoClose");
+			</OnHide>
+		</Scripts>
+	</Frame>
+	<!-- Raid Ttem Level -->
+	<Frame name="OTTILFrame" toplevel="true" frameStrata="MEDIUM" moveable="false" enableMouse="false" hidden="false" parent="UIParent">
+		<Anchors>
+			<Anchor point="RIGHT">
+				<Offset x="-70" y="60" />
+			</Anchor>
+		</Anchors>
+		<Size>
+			<AbsDimension x="200" y="600" />
+		</Size>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT" justifyV="TOP" setAllPoints="true" text="">
+					<Shadow>
+						<Offset>
+							<AbsDimension x="2" y="-2"/>
+						</Offset>
+						<Color r="0" g="0" b="0"/>
+					</Shadow>
+				</FontString>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture>
+					<Color r="0" g="0" b="1" a="0"/>
+				</Texture>
+			</Layer>			
+		</Layers>
+	</Frame>
+</Ui>
