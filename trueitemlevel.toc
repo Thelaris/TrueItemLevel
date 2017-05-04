@@ -1,5 +1,5 @@
 ## Interface: 70200
-## Title: True Item Level |cff00ccff(TiL)|r
+## Title: True Item Level 2.0 |cff00ccff(TiL)|r
 ## Author: Thelaris
 ## Notes: A World of Warcraft UI addon to show the specialization and item level/iLVL of a player within inspect range, originally created by Dreamstate83 (aka Frosty). This is a re-release using Dreamstate83's code.
 
