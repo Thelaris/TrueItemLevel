@@ -32,6 +32,7 @@
 		local til_c =		"00ccff";
 		local boa_c =		"e6cc80";
 		local pvp_c =		"a335ee";
+		local lgd_c =		"a335ee";
 		local miss_c =		"ff0000";
 		local disabled_c =	"333333";
 		
@@ -205,10 +206,10 @@
 
 		--create the tables
 		local tableSchema = {
-		   {7,			7,			31,			15,			8,			8,			8,			8,			8		},	--column width percent
-		   {"Lvl",		"Cls",		"Name",		"Spec",		"TIL",		"BOA", 		"PVP",		"MIA",		"AGE"	},	--column header
-		   {"lvl",		"class",	"name",		"spec",		"til",		"boa",		"pvp",		"mia",		"stamp"	},	--what keys the column is looking for
-		   {"level",	"class",	"class",	"aaaaaa",	til_c,		boa_c,		pvp_c,		miss_c,		"aaaaaa"},	--the color for each column in hex or special tag
+		   {7,			7,			31,			15,			6,			6,			6,			6,			6,			8		},	--column width percent
+		   {"Lvl",		"Cls",		"Name",		"Spec",		"TIL",		"BOA", 		"PVP",		"LGD",		"MIA",		"AGE"	},	--column header
+		   {"lvl",		"class",	"name",		"spec",		"til",		"boa",		"pvp",		"lgd",		"mia",		"stamp"	},	--what keys the column is looking for
+		   {"level",	"class",	"class",	"aaaaaa",	til_c,		boa_c,		pvp_c,		lgd_c,		miss_c,		"aaaaaa"},	--the color for each column in hex or special tag
 
 		   { --table configuration options
 			   sortCol		=	9,
@@ -222,10 +223,10 @@
 		tilui:createTable(tabIndexCache,tableSchema);
 
 		local tableSchemaCharacters = {
-		   {7,			7,			35,			19,			8,			8,			8,			8,			},	--column width percent
-		   {"Lvl",		"Cls",		"Name",		"Spec",		"TIL",		"BOA", 		"PVP",		"MIA",		},	--column header
-		   {"lvl",		"class",	"name",		"spec",		"til",		"boa",		"pvp",		"mia",		},	--what keys the column is looking for
-		   {"level",	"class",	"class",	"aaaaaa",	til_c,		boa_c,		pvp_c,		miss_c,		},	--the color for each column in hex or special tag
+		   {7,			7,			35,			19,			6,			6,			6,			6,			6,			},	--column width percent
+		   {"Lvl",		"Cls",		"Name",		"Spec",		"TIL",		"BOA", 		"PVP",		"LGD",		"MIA",		},	--column header
+		   {"lvl",		"class",	"name",		"spec",		"til",		"boa",		"pvp",		"lgd",		"mia",		},	--what keys the column is looking for
+		   {"level",	"class",	"class",	"aaaaaa",	til_c,		boa_c,		pvp_c,		lgd_c,		miss_c,		},	--the color for each column in hex or special tag
 
 		   { --table configuration options
 			   sortCol		=	5,
@@ -741,6 +742,8 @@
 
 				--get the values of gathertil to figure out if we need to rescan or not
 					local data = gathertil(unit,addonTag,callbackFunc);
+					
+					--print(data.rarity);
 
 				if (not data) then
 					--nothing was returned?
@@ -1014,7 +1017,8 @@
 						["name"] = (UnitName("player").." - "..serverName),
 						["level"] = UnitLevel("player"),
 						["class"] = eClass,
-						["pvp"] = tilData.pvp
+						["pvp"] = tilData.pvp,
+						["lgd"] = tilData.lgd
 					};
 
 					tilpub:getMyCharacters();
@@ -1091,6 +1095,7 @@
 		data.til = 0;
 		data.boa = 0;
 		data.pvp = 0;
+		data.lgd = 0;
 		data.mia = 0;
 
 		local link;
@@ -1110,7 +1115,7 @@
 				end
 				if (link) then
 					--get the item info
-					local iname,_,rarity,level,_,_,subtype,_,equiptype = GetItemInfo(link);
+					local iname,ilink,rarity,level,_,_,subtype,_,equiptype = GetItemInfo(link);
                     local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
 					level = ItemUpgradeInfo:GetUpgradedItemLevel(link);
 					local stats = GetItemStats(link);
@@ -1163,17 +1168,25 @@
 							count = count + 1;
 							iLVL = iLVL + level;
 						else
+							--check for legendary
+							if (rarity == 5) then
+							data.lgd = data.lgd + 1;
+							end
+								
 							count = count + 1
 							iLVL = iLVL + level
 
 							--check if pvp (has resillience)
+							--local itemString = select(3, strfind(link, "|H(.+)|h"))
+							--print(itemString);
 							for stat, value in pairs(stats) do
-								if (stat == "ITEM_MOD_RESILIENCE_RATING_SHORT" or stat == "ITEM_MOD_PVP_POWER_SHORT") then
+								if (stat == "ITEM_MOD_RESILIENCE_RATING_SHORT" or stat == "ITEM_MOD_PVP_POWER_SHORT" or string.find(iname, "Vindictive Combatant") or string.find(iname, "Vindictive Gladiator") or string.find(iname, "Cruel Combatant") or string.find(iname, "Cruel Gladiator")) then
 									data.pvp = data.pvp + 1;
 									break;
 								end
 							end
 						end
+						
 					end
 
 					--TODO finish this
@@ -1240,6 +1253,7 @@
 			current.til = data.til;
 			current.boa = data.boa;
 			current.pvp = data.pvp;
+			current.lgd = data.lgd;
 			current.mia = data.mia;
 		else
 			--unit is a player, so let's cache this info right away
@@ -1287,6 +1301,7 @@
 					["spec"]	=	cache[i].tree,
 					["boa"]		=	cache[i].boa,
 					["pvp"]		=	cache[i].pvp,
+					["lgd"]		=	cache[i].lgd,
 					["mia"]		=	cache[i].mia,
 				};
 			end
@@ -1315,6 +1330,7 @@
 						["spec"]	=	cache[i].tree,
 						["boa"]		=	cache[i].boa,
 						["pvp"]		=	cache[i].pvp,
+						["lgd"]		=	cache[i].lgd,
 						["mia"]		=	cache[i].mia,
 						["stamp"]	=	cache[i].stamp
 					};
@@ -1483,6 +1499,9 @@
 					if (data.pvp) then
 						cache[i].pvp = data.pvp;
 					end
+					if (data.lgd) then
+						cache[i].lgd = data.lgd;
+					end
 					if (data.mia) then
 						cache[i].mia = data.mia;
 					end
@@ -1547,6 +1566,9 @@
 					end
 					if (data.pvp) then
 						cache[index].pvp = data.pvp;
+					end
+					if (data.lgd) then
+						cache[index].lgd = data.lgd;
 					end
 					if (data.mia) then
 						cache[index].mia = data.mia;
@@ -1699,9 +1721,9 @@
  				GameTooltip:Show();
  			end
 
-			if (data and data.til and data.boa and data.pvp and data.mia and tilConfig.showTil) then
+			if (data and data.til and data.boa and data.pvp and data.mia and data.lgd and tilConfig.showTil) then
 
-				local til_l, boa_l, pvp_l, miss_l, outputLine;
+				local til_l, boa_l, pvp_l, lgd_l, miss_l, outputLine;
 
 				--TIL Line
 				til_l = (ttilvl_prefix.."|cff"..til_c..data.til.."|r");
@@ -1719,6 +1741,13 @@
 				else
 					pvp_l = "";
 				end
+				
+				--LGD Line
+				if (data.lgd > 0) then
+					lgd_l = (" |cff"..lgd_c.." "..data.lgd.." LGD|r");
+				else
+					lgd_l = "";
+				end
 
 				--MISS Line
 				if (data.mia > 0) then
@@ -1727,7 +1756,7 @@
 					miss_l = "";
 				end
 
-				outputLine = (til_l..boa_l..pvp_l..miss_l);
+				outputLine = (til_l..boa_l..pvp_l..lgd_l..miss_l);
 
 				local matched = false;
 				for i = 2, gtt:NumLines() do
