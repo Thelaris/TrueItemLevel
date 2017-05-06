@@ -1206,6 +1206,8 @@
 						--player does not have titans grip. Check if they have a two-hander equipped.
 						if (i==17 and twoHander == true) then
 							--two hander equipped, so we can't ding them for the missing off-hand
+							count = count + 1;
+							iLVL = iLVL + mainHandILvl;
 						else
 							--not a two hander so we need to ding them for missing a slot
 							count = count + 1;
