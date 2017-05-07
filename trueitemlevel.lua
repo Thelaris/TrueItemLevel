@@ -32,7 +32,7 @@
 		local til_c =		"00ccff";
 		local boa_c =		"e6cc80";
 		local pvp_c =		"a335ee";
-		local lgd_c =		"a335ee";
+		local lgd_c =		"ff6600";
 		local miss_c =		"ff0000";
 		local disabled_c =	"333333";
 		
@@ -1134,18 +1134,19 @@
 					
 					--7.X Artifact iLVL Fix
 					--check main hand artifact ilvl, restart if 750
-					if (i == 16 and rarity == 6 and level == 750 and artifactScanCount < 3 and specName ~= 'Protection') then
-						artifactScanCount = artifactScanCount + 1;
-						tilpub:tildbg(tag_mouse..": [|cff00ccffArtifact 750 rescanning|r] |cffffcc00fired|r")
-						doCallback(addonTag,"gathertil",'rescanning',data);
-					end
+					--if (i == 16 and rarity == 6 and level == 750 and artifactScanCount < 3 and specName ~= 'Protection') then
+						--artifactScanCount = artifactScanCount + 1;
+						--tilpub:tildbg(tag_mouse..": [|cff00ccffArtifact 750 rescanning|r] |cffffcc00fired|r")
+						--doCallback(addonTag,"gathertil",'rescanning',data);
+						--tilpub:gatherstats("mouseover",tag_mouse,"mouse_scanupdate");
+					--end
 					
 					--check off hand artifact ilvl, restart if 750 - Protection specs only
-					if (i == 17 and rarity == 6 and level == 750 and artifactScanCount < 3 and specName == 'Protection') then
-						artifactScanCount = artifactScanCount + 1;
-						tilpub:tildbg(tag_mouse..": [|cff00ccffProt Artifact 750 rescanning|r] |cffffcc00fired|r")
-						doCallback(addonTag,"gathertil",'rescanning',data);
-					end
+					--if (i == 17 and rarity == 6 and level == 750 and artifactScanCount < 3 and specName == 'Protection') then
+						--artifactScanCount = artifactScanCount + 1;
+						--tilpub:tildbg(tag_mouse..": [|cff00ccffProt Artifact 750 rescanning|r] |cffffcc00fired|r")
+						--doCallback(addonTag,"gathertil",'rescanning',data);
+					--end
 					
 					--set MH to OH ilvl or vice versa
 					if (mainHandILvl)then
@@ -2090,3 +2091,27 @@
 		end
 		return data.til, data.mia;
 	end
+	
+	local total = 0;
+ 
+local function onUpdate(self,elapsed)
+	local unitsID = UnitGUID("mouseover");
+	if (scanning == false) then
+		if (UnitGUID("mouseover")) then
+			if (string.find(UnitGUID("mouseover"), "Player")) then
+				--print(UnitGUID("mouseover"));
+				total = total + elapsed
+				if total >= 2 then
+					--DEFAULT_CHAT_FRAME:AddMessage("ping!")
+					--tilpub:gatherstats(unit,tag_statpage,"statspage_scanupdate");
+					tilpub:tildbg(tag_mouse..": [|cff00ccffStill mouseover - rescanning|r] |cffffcc00fired|r")
+					tilpub:gatherstats("mouseover",tag_mouse,"mouse_scanupdate");
+					total = 0
+				end
+			end
+		end
+	end
+end
+ 
+--local f = CreateFrame("frame")
+gtt:SetScript("OnUpdate", onUpdate)
