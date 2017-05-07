@@ -1116,8 +1116,8 @@
 				if (link) then
 					--get the item info
 					local iname,ilink,rarity,level,_,_,subtype,_,equiptype = GetItemInfo(link);
-                    local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
-					level = ItemUpgradeInfo:GetUpgradedItemLevel(link);
+                    --local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
+					--level = ItemUpgradeInfo:GetUpgradedItemLevel(link);
 					local stats = GetItemStats(link);
 
 					--do two-handed check
@@ -1164,7 +1164,7 @@
 						--check for boa gear
 						if (rarity == 7) then
 							--boa gear
-							level = boaILVL(UnitLevel(unit), link);
+							--level = boaILVL(UnitLevel(unit), link);
 							data.boa = data.boa + 1;
 							count = count + 1;
 							iLVL = iLVL + level;
