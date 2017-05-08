@@ -1116,8 +1116,8 @@
 				if (link) then
 					--get the item info
 					local iname,ilink,rarity,level,_,_,subtype,_,equiptype = GetItemInfo(link);
-                    --local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
-					--level = ItemUpgradeInfo:GetUpgradedItemLevel(link);
+                    local ItemUpgradeInfo = LibStub("LibItemUpgradeInfo-1.0")
+					level = ItemUpgradeInfo:GetUpgradedItemLevel(link);
 					local stats = GetItemStats(link);
 
 					--do two-handed check
@@ -1835,7 +1835,7 @@
 	function OTInspect(self,event,unit)
 		OTTIL:UnregisterEvent("INSPECT_READY")
 		if UnitExists(OTTIL_Unit) == 1 then
-			OTilvl, OTmia = OTgathertil(OTTIL_Unit)
+			OTilvl, OTmia = TILOTgathertil(OTTIL_Unit)
 			if (OTmia == 0) then
 				local ctext = OTilvl;
 				local otext = OTTILFrameText:GetText();
@@ -1960,7 +1960,7 @@
 		end
 	end
 
-	function OTgathertil(unit)
+	function TILOTgathertil(unit)
 		local data = {};
 
 		if (UnitIsUnit(unit,"player")) then
